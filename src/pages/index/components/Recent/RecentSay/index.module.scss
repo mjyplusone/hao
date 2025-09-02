@@ -1,0 +1,41 @@
+
+/* 留言列表 */
+.messageList {
+    display: flex;
+    flex-direction: column;
+    gap: 15rpx;
+}
+  
+.messageItem {
+    background: #fff;
+    border-radius: 16rpx;
+    padding: 24rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.15);
+    }
+}
+  
+.messageContent {
+    display: block;
+    font-size: 28rpx;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 8rpx;
+    word-break: break-all;
+}
+  
+.messageDate {
+    display: block;
+    font-size: 22rpx;
+    color: #666;
+}
+
+.messageUsername {
+    display: block;
+    font-size: 22rpx;
+    color: #666;
+}

@@ -1,0 +1,43 @@
+
+/* 生长记录列表 */
+.growthList {
+    display: flex;
+    flex-direction: column;
+    gap: 15rpx;
+}
+  
+.growthItem {
+    background: #fff;
+    border-radius: 16rpx;
+    padding: 24rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.15);
+    }
+}
+  
+.growthTitle {
+    display: block;
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8rpx;
+}
+  
+.growthValue {
+    display: block;
+    font-size: 32rpx;
+    color: #7a8ff0;
+    margin-bottom: 8rpx;
+    font-weight: 600;
+}
+  
+.growthDate {
+    display: block;
+    font-size: 22rpx;
+    color: #666;
+}
+  

@@ -1,0 +1,113 @@
+
+/* 弹窗样式 */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    width: 80%;
+    max-width: 600px;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.modalHeader {
+    padding: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    text-align: center;
+    position: relative;
+}
+
+.modalTitle {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.closeBtn:active {
+    background: rgba(255, 255, 255, 0.3);   
+}
+
+.closeIcon {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.modalContent {
+    padding: 24px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.termsText {
+    font-size: 24px;
+    line-height: 1.6;
+    color: #333333;
+    white-space: pre-line;
+}
+
+.appName {
+    font-size: 28px;
+    font-weight: 500;
+    color: #667eea;
+}
+
+.modalFooter {
+    padding: 20px 24px;
+    display: flex;
+    gap: 16px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.modalBtn {
+    flex: 1;
+    height: 48px;
+    line-height: 48px;
+    font-size: 24px;
+    border-radius: 24px;
+    border: 2px solid #e0e0e0;
+    background: #ffffff;
+    color: #666666;
+    transition: all 0.3s ease;
+}
+
+.modalBtn.agreeBtn {
+    background: #07c160;
+    color: #ffffff;
+    border-color: #07c160;
+}
+
+.modalBtn.agreeBtn:active {
+    background: #06ad56;
+}
+
+
+  

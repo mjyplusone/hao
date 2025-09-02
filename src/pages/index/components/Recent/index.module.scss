@@ -1,0 +1,20 @@
+.content {
+  flex: 1;
+  padding: 40rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  -webkit-backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
+}
+
+.section {
+  margin-bottom: 60rpx;
+}
+
+.sectionHeader {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}

@@ -1,0 +1,48 @@
+.growth {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #7a8ff0 0%, #8a5bb8 100%);
+  padding: 40rpx;
+}
+
+// Tab 容器
+.tabContainer {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20rpx;
+  padding: 8rpx;
+  margin-bottom: 40rpx;
+  backdrop-filter: blur(10rpx);
+  -webkit-backdrop-filter: blur(10rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.tabItem {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.activeTab {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.tabText {
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.3);
+}
+
+// 内容区域
+.content {
+  margin-bottom: 60rpx;
+}

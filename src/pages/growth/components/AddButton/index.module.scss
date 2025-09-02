@@ -1,0 +1,23 @@
+.addButton {
+    width: 64rpx;
+    height: 36rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10rpx;
+    backdrop-filter: blur(10rpx);
+    -webkit-backdrop-filter: blur(10rpx);
+    border: 1rpx solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    
+    &:active {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-50%) scale(0.95);
+    }
+}
+
+.addButtonText {
+    font-size: 24rpx;
+    color: #fff;
+}

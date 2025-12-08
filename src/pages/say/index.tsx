@@ -6,6 +6,7 @@ import LoginLayout from '@/Layout/LoginLayout'
 import { Header } from '@/components'
 import { createSay, getSayList } from '@/service'
 import { useRequest } from 'ahooks'
+import { formatDate } from '@/pages/album/utils/formatYearMonth'
 
 export default function Say() {
   const [inputValue, setInputValue] = React.useState('')
@@ -57,8 +58,8 @@ export default function Say() {
                 <Text className={styles.messageText}>{message.content}</Text>
               </View>
               <View className={styles.messageInfo}>
-                <Text className={styles.messageUsername}>{message.username}</Text>
-                <Text className={styles.messageDate}>{message.date}</Text>
+                <Text className={styles.messageUsername}>{message.user_name}</Text>
+                <Text className={styles.messageDate}>{formatDate(message.created_at)}</Text>
               </View>
             </View>
           ))}

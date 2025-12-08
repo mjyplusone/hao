@@ -6,9 +6,10 @@ import Taro from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useTransferStore } from '@/store/transfer'
 import { formatDateTime } from '../../utils/formatYearMonth'
+import { BASE_URL } from '@/utils/request'
 
 // 虚拟列表配置
-const ITEM_HEIGHT = 86 // 每个照片项的高度（rpx）
+const ITEM_HEIGHT = 100 // 每个照片项的高度（rpx）
 const screenWidth = Taro.getSystemInfoSync().screenWidth
 const itemHeightPx = (screenWidth / 750) * ITEM_HEIGHT // 数字类型 px
 
@@ -49,7 +50,7 @@ export const List: React.FC<Props> = ({
             handleItemSelect(photo.id)
         } else {
             Taro.navigateTo({
-              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.src || '')}&date=${photo.date || ''}`
+              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.thumbnail_url || '')}&date=${photo.created_at || ''}`
             })
         }
     }, [selectionMode, handleItemSelect])
@@ -62,10 +63,19 @@ export const List: React.FC<Props> = ({
             })
             return
         }
-        useTransferStore.getState().download(Array.from(selectedItems))
+        const selectedFiles = Array.from(selectedItems).map((id) => {
+            const photo = photoList.find((photo) => photo.id === id);
+            return {
+                id,
+                size: photo?.size || 0,
+                name: photo?.name,
+            };
+        })
+        useTransferStore.getState().download(selectedFiles)
         Taro.showToast({
             title: '请至传输列表查看下载进度',
         })
+        setSelectedItems(new Set())
     }
 
     // 处理滚动事件，更新滚动位置信息
@@ -110,7 +120,7 @@ export const List: React.FC<Props> = ({
                         </View>
                     </View>
                 )}
-                <Image src={item.src} className={styles.photoThumbnail} />
+                <Image src={`${BASE_URL}${item.thumbnail_url}`} className={styles.photoThumbnail} />
                 <View className={styles.photoInfo}>
                     <Text className={styles.photoDate}>{formatDateTime(item.created_at)}</Text>
                 </View>

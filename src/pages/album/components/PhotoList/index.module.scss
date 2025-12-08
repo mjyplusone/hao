@@ -9,10 +9,38 @@
     flex-direction: column;
 }
 
-// 滚动视图样式
-.photoListScrollView {
+// 视角选择器样式
+.viewModeSelector {
+    display: flex;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 16rpx;
+    margin: 0;
+    margin-bottom: 20rpx;
+    backdrop-filter: blur(10rpx);
+    -webkit-backdrop-filter: blur(10rpx);
+    border: 1rpx solid rgba(255, 255, 255, 0.15);
+    align-self: flex-start;
+    width: 240rpx;
+}
+  
+.viewModeItem {
     flex: 1;
-    overflow: hidden;
+    text-align: center;
+    white-space: nowrap;
+    padding: 8rpx 16rpx;
+    border-radius: 12rpx;
+    transition: all 0.3s ease;
+    font-size: 22rpx;
+    color: rgba(255, 255, 255, 0.9);
+    
+    &.active {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
 }
   
 .photoListHeader {
@@ -30,11 +58,17 @@
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
+// 滚动视图样式
+.photoListScrollView {
+    flex: 1;
+    overflow: hidden;
+}
+
 // 照片项样式
 .photoItem {
     display: flex;
     align-items: center;
-    padding: 12rpx;
+    padding: 18rpx 12rpx;
     border-bottom: 1rpx solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10rpx);

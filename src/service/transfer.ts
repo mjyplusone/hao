@@ -11,11 +11,3 @@ export const initUpload = async (params: {
   });
   return response;
 };
-
-export const getFileSize = async (params: {
-  fileId: number;
-}): Promise<{ id: number; size: number }> => {
-  return { id: params.fileId, size: 10485760 };
-  const response = await post("/transfer/getFileSize", params);
-  return response.data;
-};

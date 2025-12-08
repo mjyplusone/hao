@@ -33,12 +33,12 @@ export default defineAppConfig({
         selectedIconPath: "static/camera-selected.png",
         text: "云相册",
       },
-      {
-        pagePath: "pages/growth/index",
-        iconPath: "static/report.png",
-        selectedIconPath: "static/report-selected.png",
-        text: "生长记录",
-      },
+      // {
+      //   pagePath: "pages/growth/index",
+      //   iconPath: "static/report.png",
+      //   selectedIconPath: "static/report-selected.png",
+      //   text: "生长记录",
+      // },
       {
         pagePath: "pages/say/index",
         iconPath: "static/love.png",

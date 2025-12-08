@@ -74,3 +74,23 @@ export const formatFileSize = (bytes: number): string => {
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
 };
+
+// 从文件名获取扩展名，如果没有则默认为 .jpg
+export const getFileExtension = (filename?: string): string => {
+  if (!filename) return ".jpg";
+  const lastDot = filename.lastIndexOf(".");
+  if (lastDot === -1) return ".jpg";
+  const ext = filename.substring(lastDot).toLowerCase();
+  // 确保是有效的图片或视频扩展名
+  const validExtensions = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".webp",
+    ".mp4",
+    ".mov",
+    ".avi",
+  ];
+  return validExtensions.includes(ext) ? ext : ".jpg";
+};

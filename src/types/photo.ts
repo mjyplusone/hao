@@ -3,8 +3,8 @@ export interface Photo {
   name: string;
   size: number;
   user_id: number;
-  src?: string;
-  date?: string;
+  thumbnail_url: string;
+  created_at?: string;
 }
 
 export type ViewMode = "all" | "my";

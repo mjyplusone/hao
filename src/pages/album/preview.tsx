@@ -1,9 +1,11 @@
 import { View, Text, Image } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import { useRouter } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import styles from './preview.module.scss'
 import LoginLayout from '@/Layout/LoginLayout'
 import { Header } from '@/components'
+import { BASE_URL } from '@/utils/request'
+import { formatDateTime } from './utils/formatYearMonth'
 
 interface PhotoData {
   id: string
@@ -45,7 +47,7 @@ export default function PhotoPreview() {
         
         <View className={styles.photoContainer}>
           <Image 
-            src={photoData.src} 
+            src={`${BASE_URL}${photoData.src}`} 
             className={styles.photoImage}
             mode="aspectFit"
           />
@@ -54,7 +56,7 @@ export default function PhotoPreview() {
         <View className={styles.photoDetails}>
           <View className={styles.detailItem}>
             <Text className={styles.detailLabel}>拍摄时间</Text>
-            <Text className={styles.detailValue}>{photoData.date}</Text>
+            <Text className={styles.detailValue}>{formatDateTime(photoData.date)}</Text>
           </View>
         </View>
       </View>

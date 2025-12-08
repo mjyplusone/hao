@@ -1,14 +1,29 @@
 import { BIRTH_DATE } from "@/const";
 
-export const calculateAge = (currentData: Date) => {
-  const birthDate = BIRTH_DATE;
-  const birth = new Date(birthDate);
-  const diffTime = Math.abs(currentData.getTime() - birth.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+export const calculateAge = (currentDate: Date) => {
+  const birth = new Date(BIRTH_DATE);
 
-  const years = Math.floor(diffDays / 365);
-  const months = Math.floor((diffDays % 365) / 30);
-  const days = diffDays % 30;
+  let years = currentDate.getFullYear() - birth.getFullYear();
+  let months = currentDate.getMonth() - birth.getMonth();
+  let days = currentDate.getDate() - birth.getDate();
+
+  // 如果天数小于0，需要从上个月借
+  if (days < 0) {
+    months--;
+    // 获取上个月的最后一天
+    const lastDayOfPrevMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      0
+    ).getDate();
+    days += lastDayOfPrevMonth;
+  }
+
+  // 如果月数小于0，需要从上一年借
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
 
   return { years, months, days };
 };

@@ -2,10 +2,7 @@ import Taro from "@tarojs/taro";
 // import { BaseResponse } from "@/types";
 
 // 请求配置
-const BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? "https://haodrive.lyyyuna.com/api/v1"
-    : "https://your-api-domain.com/api";
+export const BASE_URL = "https://haodrive.lyyyuna.com/api/v1";
 
 // 请求超时时间
 const TIMEOUT = 10000;

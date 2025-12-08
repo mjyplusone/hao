@@ -34,10 +34,12 @@ export const useTransferStore = create<TransferStore>((set, get) => ({
 
   upload: async (files: Taro.chooseMedia.ChooseMedia[]) => {
     try {
-      const tasks = await Promise.all(
-        files.map((file) => get().initUpload(file))
-      );
-      get().addTasks(tasks);
+      const tasks: Omit<Task, "date">[] = [];
+      for (const file of files) {
+        const task = await get().initUpload(file);
+        tasks.push(task);
+        get().addTasks([task]);
+      }
       for (let i = 0; i < files.length; i++) {
         await get().uploadFileByChunk(tasks[i]);
       }
@@ -47,20 +49,21 @@ export const useTransferStore = create<TransferStore>((set, get) => ({
   },
 
   initUpload: async (file: Taro.chooseMedia.ChooseMedia) => {
+    console.log(file);
     let uploadId = "";
     try {
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-      const filename =
+      const originalFilename =
         file.tempFilePath.split("/").pop() ||
         `${generateDateWithHash()}${
           file.fileType === "video" ? ".mp4" : ".jpg"
         }`;
-      const { id } = await initUpload({
-        filename,
+      const { session_id, filename } = await initUpload({
+        filename: originalFilename,
         size: file.size,
         totalChunks: totalChunks,
       });
-      uploadId = id;
+      uploadId = session_id.toString();
 
       const task: Omit<Task, "date"> = {
         id: uploadId,
@@ -133,6 +136,7 @@ export const useTransferStore = create<TransferStore>((set, get) => ({
             fail: rej,
           })
         );
+        console.log("chunkBuffer", chunkBuffer);
 
         const { buffer, contentType } = buildMultipartFormData(
           chunkBuffer,
@@ -144,24 +148,20 @@ export const useTransferStore = create<TransferStore>((set, get) => ({
           },
           name
         );
+        console.log(contentType, buffer);
 
-        // TODO REMOVE MOCK
-        await new Promise((resolve) => {
-          setTimeout(() => {
-            resolve(true);
-          }, 3000);
-        });
         // 使用 Taro.request 上传
-        // await Taro.request({
-        //   url: "https://your-server.com/upload-chunk",
-        //   method: "POST",
-        //   header: {
-        //     "Content-Type": contentType,
-        //   },
-        //   data: buffer,
-        //   dataType: "other", // 不转 JSON
-        //   responseType: "text",
-        // });
+        await Taro.request({
+          url: `https://haodrive.lyyyuna.com/api/v1/upload/${id}/${i}`,
+          method: "POST",
+          header: {
+            "Content-Type": contentType,
+            Authorization: `${Taro.getStorageSync("accessToken")}`,
+          },
+          data: buffer,
+          dataType: "other", // 不转 JSON
+          responseType: "text",
+        });
 
         // 更新进度
         const newProgress = Math.floor((100 / totalChunks) * (i + 1));

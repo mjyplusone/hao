@@ -27,6 +27,7 @@ export function buildMultipartFormData(
   // 字段部分
   for (const key in fields) {
     const part = [
+      CRLF,
       `--${boundary}`,
       `Content-Disposition: form-data; name="${key}"`,
       "",
@@ -37,10 +38,11 @@ export function buildMultipartFormData(
 
   // 文件部分
   const fileHeader = [
+    CRLF,
     `--${boundary}`,
     `Content-Disposition: form-data; name="file"; filename="${filename}"`,
     `Content-Type: ${mime}`,
-    "",
+    CRLF,
   ].join(CRLF);
 
   parts.push(encoder.encode(fileHeader));

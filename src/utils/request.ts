@@ -1,10 +1,10 @@
 import Taro from "@tarojs/taro";
-import { BaseResponse } from "@/types";
+// import { BaseResponse } from "@/types";
 
 // 请求配置
 const BASE_URL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:3000/api"
+    ? "https://haodrive.lyyyuna.com/api/v1"
     : "https://your-api-domain.com/api";
 
 // 请求超时时间
@@ -17,7 +17,7 @@ const requestInterceptor = (config: any) => {
   if (token) {
     config.header = {
       ...config.header,
-      Authorization: `Bearer ${token}`,
+      Authorization: token,
     };
   }
 
@@ -46,7 +46,7 @@ const responseInterceptor = (response: any) => {
 // 统一请求方法
 export const request = async <T = any>(
   options: Taro.request.Option
-): Promise<BaseResponse<T>> => {
+): Promise<T> => {
   try {
     // 请求拦截
     const config = requestInterceptor(options);
@@ -65,10 +65,7 @@ export const request = async <T = any>(
   }
 };
 
-export const get = <T = any>(
-  url: string,
-  data?: any
-): Promise<BaseResponse<T>> => {
+export const get = <T = any>(url: string, data?: any): Promise<T> => {
   return request({
     url,
     method: "GET",
@@ -76,10 +73,7 @@ export const get = <T = any>(
   });
 };
 
-export const post = <T = any>(
-  url: string,
-  data?: any
-): Promise<BaseResponse<T>> => {
+export const post = <T = any>(url: string, data?: any): Promise<T> => {
   return request({
     url,
     method: "POST",
@@ -87,10 +81,7 @@ export const post = <T = any>(
   });
 };
 
-export const put = <T = any>(
-  url: string,
-  data?: any
-): Promise<BaseResponse<T>> => {
+export const put = <T = any>(url: string, data?: any): Promise<T> => {
   return request({
     url,
     method: "PUT",
@@ -98,10 +89,7 @@ export const put = <T = any>(
   });
 };
 
-export const del = <T = any>(
-  url: string,
-  data?: any
-): Promise<BaseResponse<T>> => {
+export const del = <T = any>(url: string, data?: any): Promise<T> => {
   return request({
     url,
     method: "DELETE",

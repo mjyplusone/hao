@@ -1,5 +1,5 @@
 import Taro from "@tarojs/taro";
-import { login } from "@/service/wechat";
+import { getWechatUserInfo, login } from "@/service/wechat";
 import { UserInfo } from "@/types/user";
 
 interface WechatLoginResult {
@@ -43,56 +43,6 @@ export const getWechatUserProfile = async (): Promise<WechatUserInfo> => {
 };
 
 /**
- * 微信登录（不包含用户信息获取）
- */
-export const wechatLoginWithoutProfile = async (): Promise<UserInfo> => {
-  try {
-    // 1. 调用 Taro.login 获取 code
-    const loginResult: WechatLoginResult = await Taro.login();
-
-    if (!loginResult.code) {
-      throw new Error("获取登录凭证失败");
-    }
-
-    // 2. 调用后端接口，只传递 code
-    const loginData = await login(loginResult.code);
-
-    // 3. 保存登录信息到本地存储
-    Taro.setStorageSync("isLoggedIn", true);
-    Taro.setStorageSync("sessionKey", loginData.session_key);
-    Taro.setStorageSync("openid", loginData.openid);
-    if (loginData.unionid) {
-      Taro.setStorageSync("unionid", loginData.unionid);
-    }
-    if (loginData.access_token) {
-      Taro.setStorageSync("accessToken", loginData.access_token);
-    }
-
-    // 4. 返回用户信息
-    const userInfo: UserInfo = {
-      id: loginData.openid, // 使用 openid 作为临时 id
-      openid: loginData.openid,
-      nickName: "微信用户",
-      avatarUrl: "",
-      gender: 0,
-      country: "",
-      province: "",
-      city: "",
-      unionid: loginData.unionid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    Taro.setStorageSync("userInfo", userInfo);
-
-    return userInfo;
-  } catch (error) {
-    console.error("微信登录失败:", error);
-    throw error;
-  }
-};
-
-/**
  * 微信登录（包含用户信息获取）
  * 接收从button组件获取的用户信息
  */
@@ -116,33 +66,15 @@ export const wechatLogin = async (
     }
 
     // 3. 调用后端接口，传递 code 和用户信息
-    const loginData = await login(loginResult.code, finalUserProfile);
+    const loginData = await login(loginResult.code);
 
     // 4. 保存登录信息到本地存储
     Taro.setStorageSync("isLoggedIn", true);
-    Taro.setStorageSync("sessionKey", loginData.session_key);
-    Taro.setStorageSync("openid", loginData.openid);
-    if (loginData.unionid) {
-      Taro.setStorageSync("unionid", loginData.unionid);
-    }
-    if (loginData.access_token) {
-      Taro.setStorageSync("accessToken", loginData.access_token);
+    if (loginData.token) {
+      Taro.setStorageSync("accessToken", loginData.token);
     }
 
-    // 5. 返回用户信息
-    const userInfo: UserInfo = {
-      id: loginData.openid, // 使用 openid 作为临时 id
-      openid: loginData.openid,
-      nickName: finalUserProfile.nickName,
-      avatarUrl: finalUserProfile.avatarUrl,
-      gender: finalUserProfile.gender || 0,
-      country: finalUserProfile.country,
-      province: finalUserProfile.province,
-      city: finalUserProfile.city,
-      unionid: loginData.unionid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    const userInfo = await getWechatUserInfo();
 
     Taro.setStorageSync("userInfo", userInfo);
 
@@ -163,14 +95,6 @@ export const checkWechatLoginStatus = (): boolean => {
   const openid = Taro.getStorageSync("openid");
 
   return !!(isLoggedIn && sessionKey && openid);
-};
-
-/**
- * 获取用户信息
- * @returns UserInfo | null
- */
-export const getWechatUserInfo = (): UserInfo | null => {
-  return Taro.getStorageSync("userInfo") || null;
 };
 
 /**

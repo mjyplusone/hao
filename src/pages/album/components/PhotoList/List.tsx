@@ -1,10 +1,11 @@
 import { View, Text, Image } from '@tarojs/components'
 import { VirtualList } from '@tarojs/components-advanced'
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { Photo } from '@/types'
 import Taro from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useTransferStore } from '@/store/transfer'
+import { formatDateTime } from '../../utils/formatYearMonth'
 
 // 虚拟列表配置
 const ITEM_HEIGHT = 86 // 每个照片项的高度（rpx）
@@ -14,13 +15,16 @@ const itemHeightPx = (screenWidth / 750) * ITEM_HEIGHT // 数字类型 px
 interface Props {
     photoList: Photo[]
     selectionMode: 'select' | 'selectAll' | null
+    onLoadMore?: () => void
 }
 
 export const List: React.FC<Props> = ({
     photoList = [],
-    selectionMode
+    selectionMode,
+    onLoadMore,
 }) => {
     const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set([]))
+    const scrollInfoRef = useRef({ scrollTop: 0, scrollHeight: 0, clientHeight: 0 })
 
     React.useEffect(() => {
         if (selectionMode === 'selectAll') {
@@ -45,25 +49,10 @@ export const List: React.FC<Props> = ({
             handleItemSelect(photo.id)
         } else {
             Taro.navigateTo({
-              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.src)}&date=${photo.date}`
+              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.src || '')}&date=${photo.date || ''}`
             })
         }
     }, [selectionMode, handleItemSelect])
-
-    const handleUploadPhoto = useCallback(() => {
-        Taro.chooseMedia({
-          count: 99,
-          mediaType: ['image', 'video'],
-          sourceType: ['album'],
-          success: (res) => {
-            console.log('选择照片成功', res.tempFiles)
-            useTransferStore.getState().upload(res.tempFiles)
-            Taro.showToast({
-                title: '请至传输列表查看上传进度',
-            })
-          }
-        })
-    }, [])
 
     const handleDownload = () => {
         if (selectedItems.size === 0) {
@@ -79,8 +68,33 @@ export const List: React.FC<Props> = ({
         })
     }
 
+    // 处理滚动事件，更新滚动位置信息
+    const handleScroll = useCallback((e: any) => {
+        const detail = e.detail || e
+        scrollInfoRef.current = {
+            scrollTop: detail.scrollTop || detail.scrollOffset || 0,
+            scrollHeight: detail.scrollHeight || photoList.length * itemHeightPx,
+            clientHeight: detail.clientHeight || detail.height || 0,
+        }
+    }, [photoList.length, itemHeightPx])
+
+    // 处理触摸结束事件，检测是否滚动到底部
+    const handleTouchEnd = useCallback(() => {
+        onLoadMore?.()
+        // const { scrollTop, scrollHeight, clientHeight } = scrollInfoRef.current
+        
+        // // 当滚动到距离底部 200px 以内时，触发加载更多
+        // const distanceToBottom = scrollHeight - scrollTop - clientHeight
+        // if (distanceToBottom < 200) {
+        //     if (onLoadMore && !loadingMore && !noMore) {
+        //         onLoadMore()
+        //     }
+        // }
+    }, [onLoadMore])
+
+
     // 渲染单个列表项
-    const renderItem = ({ id, index, data }) => {
+    const renderItem = ({ index, data }) => {
         const item = data[index]
         return (
             <View 
@@ -98,7 +112,7 @@ export const List: React.FC<Props> = ({
                 )}
                 <Image src={item.src} className={styles.photoThumbnail} />
                 <View className={styles.photoInfo}>
-                    <Text className={styles.photoDate}>{item.date}</Text>
+                    <Text className={styles.photoDate}>{formatDateTime(item.created_at)}</Text>
                 </View>
             </View>
         )
@@ -115,13 +129,9 @@ export const List: React.FC<Props> = ({
                 overscanCount={5} // 预渲染的额外项目数量
                 item={renderItem}
                 width="100%"
+                onScroll={handleScroll}
+                onTouchEnd={handleTouchEnd}
             />
-
-            {!selectionMode && (
-                <View className={styles.floatingAddButton} onClick={handleUploadPhoto}>
-                    +
-                </View>
-            )}
 
             {selectionMode && selectedItems.size > 0 && (
                 <View className={styles.downloadButton} onClick={handleDownload}>

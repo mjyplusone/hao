@@ -4,12 +4,12 @@ export const initUpload = async (params: {
   filename: string;
   size: number;
   totalChunks: number;
-}): Promise<{ id: string }> => {
-  return {
-    id: Math.random().toString(36).substring(2, 15),
-  };
-  const response = await post("/transfer/initUpload", params);
-  return response.data;
+}): Promise<{ session_id: number; folder: string; filename: string }> => {
+  const response = await post("/initupload", {
+    total_size: params.size,
+    ext: params.filename.split(".").pop(),
+  });
+  return response;
 };
 
 export const getFileSize = async (params: {

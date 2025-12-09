@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { useRequest } from 'ahooks'
 import { getPhotoFolders } from '@/service'
 import { useTransferStore } from '@/store/transfer'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 
 
 interface Props {
@@ -15,8 +15,13 @@ interface Props {
 export const FolderList: React.FC<Props> = ({ 
     onChangeFolder,
 }) => {
-    const { data: photoFolders } = useRequest(() => {
+    const { data: photoFolders, run } = useRequest(() => {
       return getPhotoFolders()
+    })
+
+    // 页面显示时刷新数据
+    useDidShow(() => {
+      run()
     })
 
     const handleFolderClick = (folder: PhotoFolder) => {

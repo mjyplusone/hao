@@ -5,7 +5,7 @@ import { usePagination } from 'ahooks'
 import { getFolderPhotos } from '@/service'
 import { List } from './List'
 import styles from './index.module.scss'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 
 interface Props {
     folder: PhotoFolder
@@ -21,7 +21,7 @@ export const PhotoList: React.FC<Props> = ({
     const [photoList, setPhotoList] = useState<Photo[]>([])
     const [noMore, setNoMore] = useState(false)
     
-    const { loading, pagination, run} = usePagination(
+    const { loading, pagination, run } = usePagination(
         async ({ current, pageSize }) => {
             Taro.showLoading({
                 title: '加载中...',
@@ -53,6 +53,11 @@ export const PhotoList: React.FC<Props> = ({
             defaultPageSize: 20,
         }
     )
+
+    // 页面显示时刷新数据
+    useDidShow(() => {
+      run({ current: 1, pageSize: 20 })
+    })
 
     React.useEffect(() => {
         const user = Taro.getStorageSync("userInfo")

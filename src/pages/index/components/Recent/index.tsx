@@ -4,10 +4,17 @@ import RecentSay from './RecentSay'
 import RecentPhoto from './RecentPhoto'
 import { useRequest } from 'ahooks'
 import { getRecentPhotos, getRecentSays } from '@/service'
+import { useDidShow } from '@tarojs/taro'
 
 export default function Recent() {
-  const { data: recentPhotos } = useRequest(getRecentPhotos)
-  const {data: recentSays} = useRequest(getRecentSays)
+  const { data: recentPhotos, run: runRecentPhotos } = useRequest(getRecentPhotos)
+  const { data: recentSays, run: runRecentSays } = useRequest(getRecentSays)
+
+  // 页面显示时刷新数据
+  useDidShow(() => {
+    runRecentPhotos()
+    runRecentSays()
+  })
 
   return (
     <View className={styles.content}>      

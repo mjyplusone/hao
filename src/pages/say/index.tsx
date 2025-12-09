@@ -1,5 +1,5 @@
 import { View, Text, Textarea, Button } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import React from 'react'
 import styles from './index.module.scss'
 import LoginLayout from '@/Layout/LoginLayout'
@@ -12,6 +12,11 @@ export default function Say() {
   const [inputValue, setInputValue] = React.useState('')
 
   const { data, run } = useRequest(getSayList)
+
+  // 页面显示时刷新数据
+  useDidShow(() => {
+    run()
+  })
 
   const handleSend = React.useCallback(async () => {
     try {

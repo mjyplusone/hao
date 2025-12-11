@@ -33,12 +33,13 @@ export const FolderList: React.FC<Props> = ({
         count: 99,
         mediaType: ['image', 'video'],
         sourceType: ['album'],
-        success: (res) => {
+        success: async (res) => {
           console.log('选择照片成功', res.tempFiles)
-          useTransferStore.getState().upload(res.tempFiles)
           Taro.showToast({
-              title: '请至传输列表查看上传进度',
+              title: '可至传输列表查看上传进度',
           })
+          await useTransferStore.getState().upload(res.tempFiles)
+          run()
         }
       })
   }, [])  

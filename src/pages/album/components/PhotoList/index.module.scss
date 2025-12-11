@@ -139,20 +139,6 @@
     text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.3);
 }
 
-// 空状态样式
-.emptyState {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 100rpx 0;
-    flex: 1;
-}
-  
-.emptyText {
-    font-size: 28rpx;
-    color: rgba(255, 255, 255, 0.7);
-}
-
 // 浮动添加按钮样式
 .floatingAddButton {
     position: fixed;

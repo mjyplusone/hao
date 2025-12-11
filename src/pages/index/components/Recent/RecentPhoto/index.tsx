@@ -3,6 +3,7 @@ import styles from './index.module.scss'
 import { Photo } from '@/types'
 import { BASE_URL } from '@/utils/request'
 import { formatDate } from '@/pages/album/utils/formatYearMonth'
+import { Empty } from "@/components"
 
 interface Props {
     photoList: Photo[]
@@ -11,7 +12,9 @@ interface Props {
 const RecentPhoto: React.FC<Props> = ({ photoList = [] }) => {
     return (
         <View className={styles.photoGrid}>
-          {photoList.map((photo) => (
+          {photoList.length === 0 ? (
+              <Empty content="暂无照片" color="#000" />
+          ) : photoList.map((photo) => (
             <View 
               key={photo.id} 
               className={styles.photoItem}

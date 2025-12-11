@@ -5,6 +5,7 @@ import { formatFileSize } from "@/utils/upload";
 import { useTransferStore } from "@/store/transfer";
 import { useCallback, useMemo, useState } from "react";
 import Taro from "@tarojs/taro";
+import { Empty } from "@/components"
 import styles from "./index.module.scss";
 
 interface Props {
@@ -211,11 +212,7 @@ export default function TransferList({ activeTab }: Props) {
             </View>
 
             {currentTasks.length === 0 && (
-                <View className={styles.emptyState}>
-                    <Text className={styles.emptyText}>
-                        {activeTab === 'upload' ? '暂无上传任务' : '暂无下载任务'}
-                    </Text>
-                </View>
+                <Empty content={activeTab === 'upload' ? '暂无上传任务' : '暂无下载任务'} /> 
             )}
         </>
     );

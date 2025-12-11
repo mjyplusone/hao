@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { View, Text } from '@tarojs/components'
 import { PhotoFolder, Photo, ViewMode } from '@/types'
 import { usePagination } from 'ahooks'
@@ -6,6 +6,8 @@ import { getFolderPhotos } from '@/service'
 import { List } from './List'
 import styles from './index.module.scss'
 import Taro, { useDidShow } from '@tarojs/taro'
+import { Empty } from "@/components"
+import { useTransferStore } from '@/store/transfer'
 
 interface Props {
     folder: PhotoFolder
@@ -20,6 +22,10 @@ export const PhotoList: React.FC<Props> = ({
     
     const [photoList, setPhotoList] = useState<Photo[]>([])
     const [noMore, setNoMore] = useState(false)
+    
+    // 监听上传任务状态，上传完成后刷新列表
+    const { tasks } = useTransferStore()
+    const lastCompletedTaskIdsRef = useRef<Set<string>>(new Set())
     
     const { loading, pagination, run } = usePagination(
         async ({ current, pageSize }) => {
@@ -64,6 +70,26 @@ export const PhotoList: React.FC<Props> = ({
         run({ current: 1, pageSize: 20, user: viewMode === "my" ? user.name : undefined })
     }, [folder, viewMode])
 
+    // 监听上传任务完成，自动刷新列表
+    React.useEffect(() => {
+        const completedUploadTasks = tasks.filter(
+            task => task.type === 'upload' && task.status === 'completed'
+        )
+        const currentCompletedTaskIds = new Set(completedUploadTasks.map(task => task.id))
+        
+        // 检查是否有新的上传任务完成（不在上次记录的集合中）
+        const hasNewCompletedTask = Array.from(currentCompletedTaskIds).some(
+            id => !lastCompletedTaskIdsRef.current.has(id)
+        )
+        
+        // 如果有新的上传任务完成，刷新列表
+        if (hasNewCompletedTask) {
+            const user = Taro.getStorageSync("userInfo")
+            run({ current: 1, pageSize: 20, user: viewMode === "my" ? user.name : undefined })
+            lastCompletedTaskIdsRef.current = currentCompletedTaskIds
+        }
+    }, [tasks, run, viewMode])
+
     
     // 加载更多的函数
     const loadMore = React.useCallback(() => {
@@ -91,9 +117,7 @@ export const PhotoList: React.FC<Props> = ({
             </View>
 
             {photoList.length === 0 ? (
-                 <View className={styles.emptyState}>
-                    <Text className={styles.emptyText}>暂无照片</Text>
-                </View>
+                <Empty content="暂无照片" />
             ) : (
                 <>
                     <View className={styles.photoListHeader}>

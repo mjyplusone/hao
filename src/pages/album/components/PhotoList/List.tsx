@@ -73,7 +73,7 @@ export const List: React.FC<Props> = ({
         })
         useTransferStore.getState().download(selectedFiles)
         Taro.showToast({
-            title: '请至传输列表查看下载进度',
+            title: '可至传输列表查看下载进度',
         })
         setSelectedItems(new Set())
     }
@@ -131,6 +131,7 @@ export const List: React.FC<Props> = ({
     return (
         <>
             <VirtualList
+                key={photoList.length}
                 className={styles.photoListScrollView}
                 height="calc(100vh - 200rpx)" // 使用剩余高度
                 itemData={photoList}

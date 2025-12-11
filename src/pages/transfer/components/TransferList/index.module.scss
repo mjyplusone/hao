@@ -1,252 +1,237 @@
 
 .transferList {
     margin: 32rpx 0;
+}
+
+.transferItem {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+
+  &:last-child {
+    margin-bottom: 0;
   }
   
-  .transferItem {
-    background: #fff;
-    border-radius: 16rpx;
-    padding: 32rpx;
-    margin-bottom: 24rpx;
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
-  
+  // 在分组内的任务项样式调整
+  .taskList & {
+    margin-bottom: 16rpx;
+    box-shadow: none;
+    border: 1rpx solid #f0f0f0;
+    
     &:last-child {
-      margin-bottom: 0;
-    }
-    
-    // 在分组内的任务项样式调整
-    .taskList & {
-      margin-bottom: 16rpx;
-      box-shadow: none;
-      border: 1rpx solid #f0f0f0;
-      
-      &:last-child {
-        margin-bottom: 32rpx;
-      }
+      margin-bottom: 32rpx;
     }
   }
-  
-  .fileInfo {
-    margin-bottom: 24rpx;
-  }
-  
-  .fileName {
-    font-size: 32rpx;
-    line-height: 1;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8rpx;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 100%;
-  }
-  
-  .fileSize {
-    font-size: 24rpx;
-    line-height: 1;
-    color: #666;
-    margin-bottom: 8rpx;
-    display: block;
-  }
-  
-  .fileDate {
-    font-size: 24rpx;
-    line-height: 1;
-    color: #999;
-    margin-bottom: 8rpx;
-    display: block;
-  }
-  
-  // 断点续传信息样式
-  .resumeInfo {
-    font-size: 22rpx;
-    line-height: 1;
-    color: #1890ff;
-    background-color: #e6f7ff;
-    padding: 4rpx 8rpx;
-    border-radius: 4rpx;
-    display: inline-block;
-  }
-  
-  .statusInfo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16rpx;
-    justify-content: flex-end;
-  }
-  
-  .status {
-    font-size: 28rpx;
-    font-weight: 500;
-    padding: 0 16rpx;
-    border-radius: 8rpx;
-    
-    &.completed {
-      color: #52c41a;
-      background-color: #f6ffed;
-    }
-    
-    &.failed {
-      color: #ff4d4f;
-      background-color: #fff2f0;
-    }
-    
-    &.pending {
-      color: #faad14;
-      background-color: #fffbe6;
-    }
-    
-    &.paused {
-      color: #722ed1;
-      background-color: #f9f0ff;
-    }
-  }
-  
-  // 任务操作按钮样式
-  .taskActions {
-    display: flex;
-    gap: 12rpx;
-    flex-shrink: 0;
-  }
-  
-  .actionBtn {
-    background: #1890ff;
-    color: #fff;
-    border: none;
-    border-radius: 8rpx;
-    padding: 8rpx 16rpx;
-    font-size: 22rpx;
-    min-width: 80rpx;
-    transition: all 0.3s ease;
-    
-    &:active {
-      transform: scale(0.98);
-      background: #40a9ff;
-    }
-  }
-  
-  .pauseBtn {
-    background: #faad14;
-    
-    &:active {
-      background: #ffc53d;
-    }
-  }
-  
-  .removeBtn {
-    background: #ff4d4f;
-    &:active {
-      background: #ff7875;
-    }
-  }
-  
-  .resumeBtn {
-    background: #52c41a;
-    &:active {
-      background: #73d13d;
-    }
-  }
-  
-  // 状态分组样式
-  .statusGroup {
-    background: #fff;
-    border-radius: 16rpx;
-    margin-bottom: 24rpx;
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-  
-  .statusHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24rpx 32rpx;
-    background: #fafafa;
-    border-bottom: 1rpx solid #f0f0f0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    
-    &:active {
-      background: #f0f0f0;
-    }
-  }
-  
-  .statusTitle {
-    display: flex;
-    align-items: center;
-    gap: 16rpx;
-  }
-  
-  .taskCount {
-    font-size: 24rpx;
-    color: #999;
-  }
-  
-  .collapseIcon {
-    font-size: 24rpx;
-    color: #999;
-    transition: transform 0.3s ease;
-    
-    &.collapsed {
-      transform: rotate(-90deg);
-    }
-  }
-  
-  .taskList {
-    padding: 32rpx;
-    
-    // VirtualList 容器样式
-    :global(.taro-virtual-list) {
-      width: 100%;
-    }
-  }
-  
-  .progressContainer {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    margin-left: 24rpx;
-    min-width: 200rpx;
-  }
-  
-  .progressBar {
-    flex: 1;
-    height: 8rpx;
-    background-color: #f0f0f0;
-    border-radius: 4rpx;
-    overflow: hidden;
-    margin-right: 16rpx;
-  }
-  
-  .progressFill {
-    height: 100%;
-    background-color: #1890ff;
-    border-radius: 4rpx;
-    transition: width 0.3s ease;
-  }
-  
-  .progressText {
-    font-size: 24rpx;
-    color: #666;
-    min-width: 60rpx;
-    text-align: right;
-  }
+}
 
+.fileInfo {
+  margin-bottom: 24rpx;
+}
 
-.emptyState {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 400rpx;
+.fileName {
+  font-size: 32rpx;
+  line-height: 1;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.fileSize {
+  font-size: 24rpx;
+  line-height: 1;
+  color: #666;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.fileDate {
+  font-size: 24rpx;
+  line-height: 1;
+  color: #999;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+// 断点续传信息样式
+.resumeInfo {
+  font-size: 22rpx;
+  line-height: 1;
+  color: #1890ff;
+  background-color: #e6f7ff;
+  padding: 4rpx 8rpx;
+  border-radius: 4rpx;
+  display: inline-block;
+}
+
+.statusInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  justify-content: flex-end;
+}
+
+.status {
+  font-size: 28rpx;
+  font-weight: 500;
+  padding: 0 16rpx;
+  border-radius: 8rpx;
+  
+  &.completed {
+    color: #52c41a;
+    background-color: #f6ffed;
   }
   
-  .emptyText {
-    font-size: 28rpx;
-    color: #999;
+  &.failed {
+    color: #ff4d4f;
+    background-color: #fff2f0;
   }
   
+  &.pending {
+    color: #faad14;
+    background-color: #fffbe6;
+  }
   
+  &.paused {
+    color: #722ed1;
+    background-color: #f9f0ff;
+  }
+}
+
+// 任务操作按钮样式
+.taskActions {
+  display: flex;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  background: #1890ff;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 8rpx 16rpx;
+  font-size: 22rpx;
+  min-width: 80rpx;
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.98);
+    background: #40a9ff;
+  }
+}
+
+.pauseBtn {
+  background: #faad14;
+  
+  &:active {
+    background: #ffc53d;
+  }
+}
+
+.removeBtn {
+  background: #ff4d4f;
+  &:active {
+    background: #ff7875;
+  }
+}
+
+.resumeBtn {
+  background: #52c41a;
+  &:active {
+    background: #73d13d;
+  }
+}
+
+// 状态分组样式
+.statusGroup {
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.statusHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  background: #fafafa;
+  border-bottom: 1rpx solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+  &:active {
+    background: #f0f0f0;
+  }
+}
+
+.statusTitle {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.taskCount {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.collapseIcon {
+  font-size: 24rpx;
+  color: #999;
+  transition: transform 0.3s ease;
+  
+  &.collapsed {
+    transform: rotate(-90deg);
+  }
+}
+
+.taskList {
+  padding: 32rpx;
+  
+  // VirtualList 容器样式
+  :global(.taro-virtual-list) {
+    width: 100%;
+  }
+}
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin-left: 24rpx;
+  min-width: 200rpx;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+  overflow: hidden;
+  margin-right: 16rpx;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #1890ff;
+  border-radius: 4rpx;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: 24rpx;
+  color: #666;
+  min-width: 60rpx;
+  text-align: right;
+}

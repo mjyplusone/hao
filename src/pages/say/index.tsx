@@ -6,7 +6,7 @@ import LoginLayout from '@/Layout/LoginLayout'
 import { Header } from '@/components'
 import { createSay, getSayList } from '@/service'
 import { useRequest } from 'ahooks'
-import { formatDate } from '@/pages/album/utils/formatYearMonth'
+import { formatDate } from '@/utils/format'
 
 export default function Say() {
   const [inputValue, setInputValue] = React.useState('')

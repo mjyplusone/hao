@@ -14,7 +14,7 @@ interface Props {
     selectionMode: 'select' | 'selectAll' | null
 }
 
-export const PhotoList: React.FC<Props> = ({ 
+const PhotoList: React.FC<Props> = ({ 
     folder, 
     selectionMode,
 }) => {
@@ -138,3 +138,5 @@ export const PhotoList: React.FC<Props> = ({
         </View>
     )
 }
+
+export default PhotoList

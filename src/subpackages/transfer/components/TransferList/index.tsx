@@ -48,7 +48,7 @@ const getStatusClass = (status: Task["status"]) => {
 }
 
 export default function TransferList({ activeTab }: Props) {
-    const { tasks, pauseTask, resumeTask, removeTask, clearTempFiles } = useTransferStore()
+    const { tasks, pauseTask, resumeTask, removeTask } = useTransferStore()
 
     const [collapsedStates, setCollapsedStates] = useState<Record<string, boolean>>({ "completed": true })
 
@@ -165,6 +165,10 @@ export default function TransferList({ activeTab }: Props) {
             </View>
         </View>
         )
+    }
+
+    if (!currentTasks.length) {
+        return <Empty content={activeTab === 'upload' ? '暂无上传任务' : '暂无下载任务'} color="#333" />
     }
 
     return (

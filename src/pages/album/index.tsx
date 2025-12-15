@@ -1,14 +1,15 @@
 import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useState, useRef, useMemo } from 'react'
+import { useState, useMemo, lazy, Suspense } from 'react'
 import LoginLayout from '@/Layout/LoginLayout'
 import { PhotoFolder } from '@/types'
 import { Header } from '@/components'
 import { useTransferStore } from '@/store/transfer'
 
 import styles from './index.module.scss'
-import { FolderList } from './components/FolderList'
-import { PhotoList } from './components/PhotoList'
+
+const FolderList = lazy(() => import('./components/FolderList'))
+const PhotoList = lazy(() => import('./components/PhotoList'))
 
 export default function Album() {
   const [currentFolder, setCurrentFolder] = useState<PhotoFolder | null>(null)
@@ -39,7 +40,7 @@ export default function Album() {
 
   const handleTransferClick = () => {
     Taro.navigateTo({
-      url: '/pages/transfer/index'
+      url: '/subpackages/transfer/index'
     })
   }
 
@@ -98,16 +99,18 @@ export default function Album() {
             leftButton={renderBackButton()}
         />
 
-        {currentFolder ? (
-          <PhotoList 
-            folder={currentFolder} 
-            selectionMode={selectionMode}
-          />
-        ) : (
-          <FolderList 
-            onChangeFolder={(folder) => setCurrentFolder(folder)}
-          />
-        )}
+        <Suspense fallback={<View>加载中...</View>}>
+          {currentFolder ? (
+            <PhotoList 
+              folder={currentFolder} 
+              selectionMode={selectionMode}
+            />
+          ) : (
+            <FolderList 
+              onChangeFolder={(folder) => setCurrentFolder(folder)}
+            />
+          )}
+        </Suspense>
       </View>
     </LoginLayout>
   )

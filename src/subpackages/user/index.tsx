@@ -2,7 +2,8 @@ import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import styles from './index.module.scss'
-import { checkWechatLoginStatus, getWechatUserInfo, clearWechatLogin } from '@/utils/login'
+import { checkWechatLoginStatus, clearWechatLogin } from '@/utils/login'
+import { getWechatUserInfo } from "@/service/wechat";
 import { goToLogin } from '@/utils/auth'
 
 export default function User() {

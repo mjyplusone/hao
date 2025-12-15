@@ -12,7 +12,7 @@ interface Props {
     onChangeFolder: (folder: PhotoFolder | null) => void
 }
 
-export const FolderList: React.FC<Props> = ({ 
+const FolderList: React.FC<Props> = ({ 
     onChangeFolder,
 }) => {
     const { data: photoFolders, run } = useRequest(() => {
@@ -68,3 +68,5 @@ export const FolderList: React.FC<Props> = ({
         </>
     )
 }
+
+export default FolderList

@@ -5,7 +5,7 @@ import { Photo } from '@/types'
 import Taro from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useTransferStore } from '@/store/transfer'
-import { formatDateTime } from '../../utils/formatYearMonth'
+import { formatDateTime } from '@/utils/format'
 import { BASE_URL } from '@/utils/request'
 
 // 虚拟列表配置

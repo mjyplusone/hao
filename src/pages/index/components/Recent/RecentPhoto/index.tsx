@@ -2,7 +2,7 @@ import { View, Text, Image } from '@tarojs/components'
 import styles from './index.module.scss'
 import { Photo } from '@/types'
 import { BASE_URL } from '@/utils/request'
-import { formatDate } from '@/pages/album/utils/formatYearMonth'
+import { formatDate } from '@/utils/format'
 import { Empty } from "@/components"
 
 interface Props {

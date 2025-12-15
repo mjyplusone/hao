@@ -1,7 +1,7 @@
 import { View, Text } from '@tarojs/components'
 import styles from './index.module.scss'
 import { Say } from '@/types'
-import { formatDate } from '@/pages/album/utils/formatYearMonth'
+import { formatDate } from '@/utils/format'
 import { Empty } from "@/components"
 
 interface Props {

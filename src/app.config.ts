@@ -4,10 +4,21 @@ export default defineAppConfig({
     "pages/index/index",
     "pages/album/index",
     "pages/album/preview",
-    "pages/growth/index",
-    "pages/growth/add",
     "pages/say/index",
-    "pages/transfer/index",
+  ],
+  subPackages: [
+    {
+      root: "subpackages/growth",
+      pages: ["index", "add"],
+    },
+    {
+      root: "subpackages/transfer",
+      pages: ["index"],
+    },
+    {
+      root: "subpackages/user",
+      pages: ["index"],
+    },
   ],
   window: {
     backgroundTextStyle: "light",
@@ -47,4 +58,5 @@ export default defineAppConfig({
       },
     ],
   },
+  lazyCodeLoading: "requiredComponents",
 });

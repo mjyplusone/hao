@@ -91,26 +91,8 @@ export const wechatLogin = async (
  */
 export const checkWechatLoginStatus = (): boolean => {
   const isLoggedIn = Taro.getStorageSync("isLoggedIn");
-  const sessionKey = Taro.getStorageSync("sessionKey");
-  const openid = Taro.getStorageSync("openid");
 
-  return !!(isLoggedIn && sessionKey && openid);
-};
-
-/**
- * 获取 openid
- * @returns string | null
- */
-export const getOpenid = (): string | null => {
-  return Taro.getStorageSync("openid") || null;
-};
-
-/**
- * 获取 session key
- * @returns string | null
- */
-export const getSessionKey = (): string | null => {
-  return Taro.getStorageSync("sessionKey") || null;
+  return !!isLoggedIn;
 };
 
 /**
@@ -126,9 +108,6 @@ export const getAccessToken = (): string | null => {
  */
 export const clearWechatLogin = () => {
   Taro.removeStorageSync("isLoggedIn");
-  Taro.removeStorageSync("sessionKey");
-  Taro.removeStorageSync("openid");
-  Taro.removeStorageSync("unionid");
   Taro.removeStorageSync("accessToken");
   Taro.removeStorageSync("userInfo");
 };

@@ -5,7 +5,7 @@ import styles from './preview.module.scss'
 import LoginLayout from '@/Layout/LoginLayout'
 import { Header } from '@/components'
 import { BASE_URL } from '@/utils/request'
-import { formatDateTime } from './utils/formatYearMonth'
+import { formatDateTime } from '@/utils/format'
 
 interface PhotoData {
   id: string
@@ -55,7 +55,7 @@ export default function PhotoPreview() {
         
         <View className={styles.photoDetails}>
           <View className={styles.detailItem}>
-            <Text className={styles.detailLabel}>拍摄时间</Text>
+            <Text className={styles.detailLabel}>上传时间</Text>
             <Text className={styles.detailValue}>{formatDateTime(photoData.date)}</Text>
           </View>
         </View>

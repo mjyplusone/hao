@@ -11,16 +11,10 @@ export const getUserInfo = () => {
   return Taro.getStorageSync("userInfo") || null;
 };
 
-// 获取session key
-export const getSessionKey = () => {
-  return Taro.getStorageSync("sessionKey") || null;
-};
-
 // 清除登录状态
 export const clearLoginStatus = () => {
   Taro.removeStorageSync("isLoggedIn");
   Taro.removeStorageSync("userInfo");
-  Taro.removeStorageSync("sessionKey");
 };
 
 // 跳转到登录页面

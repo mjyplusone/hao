@@ -10,7 +10,7 @@ const AddButton: React.FC<Props> = ({ refresh }) => {
     const handleAddRecord = () => {
         Taro.hideTabBar()
         Taro.navigateTo({ 
-            url: '/pages/growth/add',
+            url: '/subpackages/growth/add',
             events: {
                 addSuccess: () => {
                     refresh()

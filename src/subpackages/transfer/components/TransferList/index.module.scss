@@ -31,7 +31,7 @@
 }
 
 .fileName {
-  font-size: 32rpx;
+  font-size: 34rpx;
   line-height: 1;
   font-weight: 500;
   color: #333;
@@ -44,7 +44,7 @@
 }
 
 .fileSize {
-  font-size: 24rpx;
+  font-size: 26rpx;
   line-height: 1;
   color: #666;
   margin-bottom: 8rpx;
@@ -52,7 +52,7 @@
 }
 
 .fileDate {
-  font-size: 24rpx;
+  font-size: 26rpx;
   line-height: 1;
   color: #999;
   margin-bottom: 8rpx;
@@ -61,7 +61,7 @@
 
 // 断点续传信息样式
 .resumeInfo {
-  font-size: 22rpx;
+  font-size: 24rpx;
   line-height: 1;
   color: #1890ff;
   background-color: #e6f7ff;
@@ -80,7 +80,7 @@
 }
 
 .status {
-  font-size: 28rpx;
+  font-size: 30rpx;
   font-weight: 500;
   padding: 0 16rpx;
   border-radius: 8rpx;
@@ -119,7 +119,7 @@
   border: none;
   border-radius: 8rpx;
   padding: 8rpx 16rpx;
-  font-size: 22rpx;
+  font-size: 24rpx;
   min-width: 80rpx;
   transition: all 0.3s ease;
   
@@ -182,12 +182,12 @@
 }
 
 .taskCount {
-  font-size: 24rpx;
+  font-size: 26rpx;
   color: #999;
 }
 
 .collapseIcon {
-  font-size: 24rpx;
+  font-size: 26rpx;
   color: #999;
   transition: transform 0.3s ease;
   
@@ -230,7 +230,7 @@
 }
 
 .progressText {
-  font-size: 24rpx;
+  font-size: 26rpx;
   color: #666;
   min-width: 60rpx;
   text-align: right;

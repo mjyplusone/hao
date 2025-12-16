@@ -1,4 +1,4 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, Video } from '@tarojs/components'
 import { useRouter } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import styles from './preview.module.scss'
@@ -6,11 +6,13 @@ import LoginLayout from '@/Layout/LoginLayout'
 import { Header } from '@/components'
 import { BASE_URL } from '@/utils/request'
 import { formatDateTime } from '@/utils/format'
+import { getFileType } from '@/utils/fileType'
 
 interface PhotoData {
   id: string
   src: string
   date: string
+  name: string
 }
 
 export default function PhotoPreview() {
@@ -19,11 +21,12 @@ export default function PhotoPreview() {
 
   useEffect(() => {
     if (router.params) {
-      const { id, src, date } = router.params
+      const { id, src, date, name } = router.params
       setPhotoData({
         id: id || '',
         src: decodeURIComponent(src || ''),
-        date: date || ''
+        date: date || '',
+        name: name || ''
       })
     }
   }, [router.params])
@@ -42,15 +45,22 @@ export default function PhotoPreview() {
     <LoginLayout>
       <View className={styles.preview}>
         <Header 
-          title="照片预览" 
+          title="预览" 
         />
         
         <View className={styles.photoContainer}>
-          <Image 
-            src={`${BASE_URL}${photoData.src}`} 
-            className={styles.photoImage}
-            mode="aspectFit"
-          />
+          {getFileType(photoData.name) === 'video' ? (
+            <Video 
+              src={`${BASE_URL}${photoData.src}`} 
+              className={styles.photoImage}
+            />
+          ) : (
+            <Image 
+              src={`${BASE_URL}${photoData.src}`} 
+              className={styles.photoImage}
+              mode="aspectFit"
+            />
+          )}
         </View>
         
         <View className={styles.photoDetails}>

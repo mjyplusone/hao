@@ -7,6 +7,7 @@ import styles from './index.module.scss'
 import { useTransferStore } from '@/store/transfer'
 import { formatDateTime } from '@/utils/format'
 import { BASE_URL } from '@/utils/request'
+import { getFileType } from '@/utils/fileType'
 
 // 虚拟列表配置
 const ITEM_HEIGHT = 100 // 每个照片项的高度（rpx）
@@ -50,7 +51,7 @@ export const List: React.FC<Props> = ({
             handleItemSelect(photo.id)
         } else {
             Taro.navigateTo({
-              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.thumbnail_url || '')}&date=${photo.created_at || ''}`
+              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.thumbnail_url || '')}&date=${photo.created_at || ''}&name=${photo.name}`
             })
         }
     }, [selectionMode, handleItemSelect])
@@ -103,9 +104,14 @@ export const List: React.FC<Props> = ({
     }, [onLoadMore])
 
 
+    
+
     // 渲染单个列表项
     const renderItem = ({ index, data }) => {
         const item = data[index]
+        const fileType = getFileType(item.name)
+        const isVideo = fileType === 'video'
+        
         return (
             <View 
                 className={`${styles.photoItem} ${selectionMode ? styles.selectionMode : ''}`}
@@ -120,9 +126,21 @@ export const List: React.FC<Props> = ({
                         </View>
                     </View>
                 )}
-                <Image src={`${BASE_URL}${item.thumbnail_url}`} className={styles.photoThumbnail} />
+                <View className={styles.thumbnailWrapper}>
+                    <Image src={`${BASE_URL}${item.thumbnail_url}`} className={styles.photoThumbnail} />
+                    {isVideo && (
+                        <View className={styles.videoBadge}>
+                            <Text className={styles.videoIcon}>▶</Text>
+                        </View>
+                    )}
+                </View>
                 <View className={styles.photoInfo}>
-                    <Text className={styles.photoDate}>{formatDateTime(item.created_at)}</Text>
+                    <View className={styles.photoDateRow}>
+                        <Text className={styles.photoDate}>{formatDateTime(item.created_at)}</Text>
+                        {isVideo && (
+                            <Text className={styles.fileTypeLabel}>视频</Text>
+                        )}
+                    </View>
                 </View>
             </View>
         )

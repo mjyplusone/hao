@@ -28,14 +28,15 @@ const PhotoList: React.FC<Props> = ({
     const lastCompletedTaskIdsRef = useRef<Set<string>>(new Set())
     
     const { loading, pagination, run } = usePagination(
-        async ({ current, pageSize }) => {
+        async ({ current, pageSize, user }) => {
             Taro.showLoading({
                 title: '加载中...',
               })
 
             const photos = await getFolderPhotos({ 
                 folderId: folder.id, 
-                page: current ?? 1
+                page: current ?? 1,
+                user: user
             })
             
             // 如果是第一页，直接设置；否则追加

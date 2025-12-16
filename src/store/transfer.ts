@@ -368,6 +368,19 @@ export const useTransferStore = create<TransferStore>((set, get) => ({
           // 根据文件扩展名判断是视频还是图片
           const isVideo = /\.(mp4|mov|avi)$/i.test(filePath);
 
+          // 确保权限
+          const setting = await Taro.getSetting();
+          if (!setting.authSetting["scope.writePhotosAlbum"]) {
+            try {
+              await Taro.authorize({ scope: "scope.writePhotosAlbum" });
+              console.log("授权成功");
+            } catch {
+              Taro.openSetting();
+              console.log("授权失败");
+              return;
+            }
+          }
+
           if (isVideo) {
             await Taro.saveVideoToPhotosAlbum({
               filePath,

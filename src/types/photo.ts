@@ -4,6 +4,7 @@ export interface Photo {
   size: number;
   user_id: number;
   thumbnail_url: string;
+  preview_url?: string;
   created_at?: string;
 }
 

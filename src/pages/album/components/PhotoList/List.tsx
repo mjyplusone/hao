@@ -6,7 +6,6 @@ import Taro from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useTransferStore } from '@/store/transfer'
 import { formatDateTime } from '@/utils/format'
-import { BASE_URL } from '@/utils/request'
 import { getFileType } from '@/utils/fileType'
 
 // 虚拟列表配置
@@ -27,6 +26,7 @@ export const List: React.FC<Props> = ({
 }) => {
     const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set([]))
     const scrollInfoRef = useRef({ scrollTop: 0, scrollHeight: 0, clientHeight: 0 })
+    const touchStartRef = useRef<{ x: number; y: number } | null>(null)
 
     React.useEffect(() => {
         if (selectionMode === 'selectAll') {
@@ -51,7 +51,7 @@ export const List: React.FC<Props> = ({
             handleItemSelect(photo.id)
         } else {
             Taro.navigateTo({
-              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.thumbnail_url || '')}&date=${photo.created_at || ''}&name=${photo.name}`
+              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.preview_url || photo.thumbnail_url || '')}&date=${photo.created_at || ''}&name=${photo.name}`
             })
         }
     }, [selectionMode, handleItemSelect])
@@ -89,22 +89,46 @@ export const List: React.FC<Props> = ({
         }
     }, [photoList.length, itemHeightPx])
 
+    // 处理触摸开始事件，记录触摸位置
+    const handleTouchStart = useCallback((e: any) => {
+        const touch = e.touches?.[0] || e.changedTouches?.[0]
+        if (touch) {
+            touchStartRef.current = { x: touch.clientX || touch.x, y: touch.clientY || touch.y }
+        }
+    }, [])
+
     // 处理触摸结束事件，检测是否滚动到底部
-    const handleTouchEnd = useCallback(() => {
-        onLoadMore?.()
-        // const { scrollTop, scrollHeight, clientHeight } = scrollInfoRef.current
+    const handleTouchEnd = useCallback((e: any) => {
+        // 如果没有触摸开始记录，说明不是正常的触摸流程，直接返回
+        if (!touchStartRef.current) {
+            return
+        }
+
+        // 检查是否是点击事件（位置变化很小）还是滚动事件
+        const touch = e.changedTouches?.[0] || e.touches?.[0]
+        if (touch) {
+            const endX = touch.clientX || touch.x
+            const endY = touch.clientY || touch.y
+            const deltaX = Math.abs(endX - touchStartRef.current.x)
+            const deltaY = Math.abs(endY - touchStartRef.current.y)
+            
+            // 如果移动距离小于 10px，认为是点击事件，不触发 loadMore
+            if (deltaX < 10 && deltaY < 10) {
+                touchStartRef.current = null
+                return
+            }
+        }
         
-        // // 当滚动到距离底部 200px 以内时，触发加载更多
-        // const distanceToBottom = scrollHeight - scrollTop - clientHeight
-        // if (distanceToBottom < 200) {
-        //     if (onLoadMore && !loadingMore && !noMore) {
-        //         onLoadMore()
-        //     }
-        // }
+        // 清除触摸开始记录
+        touchStartRef.current = null
+
+        // 只有真正的滚动事件才触发 loadMore
+        const { scrollTop, scrollHeight, clientHeight } = scrollInfoRef.current
+        const distanceToBottom = scrollHeight - scrollTop - clientHeight
+        if (distanceToBottom < 200) {
+            onLoadMore?.()
+        }
     }, [onLoadMore])
-
-
-    
 
     // 渲染单个列表项
     const renderItem = ({ index, data }) => {
@@ -127,7 +151,7 @@ export const List: React.FC<Props> = ({
                     </View>
                 )}
                 <View className={styles.thumbnailWrapper}>
-                    <Image src={`${BASE_URL}${item.thumbnail_url}`} className={styles.photoThumbnail} />
+                    <Image src={item.thumbnail_url} className={styles.photoThumbnail} />
                     {isVideo && (
                         <View className={styles.videoBadge}>
                             <Text className={styles.videoIcon}>▶</Text>
@@ -159,6 +183,7 @@ export const List: React.FC<Props> = ({
                 item={renderItem}
                 width="100%"
                 onScroll={handleScroll}
+                onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
             />
 

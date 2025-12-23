@@ -61,10 +61,11 @@ const PhotoList: React.FC<Props> = ({
         }
     )
 
-    // 页面显示时刷新数据
-    useDidShow(() => {
-      run({ current: 1, pageSize: 20 })
-    })
+    // // 页面显示时刷新数据
+    // useDidShow(() => {
+    //     const user = Taro.getStorageSync("userInfo")
+    //     run({ current: 1, pageSize: 20, user: viewMode === "my" ? user.name : undefined })
+    // })
 
     React.useEffect(() => {
         const user = Taro.getStorageSync("userInfo")

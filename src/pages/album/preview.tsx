@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import styles from './preview.module.scss'
 import LoginLayout from '@/Layout/LoginLayout'
 import { Header } from '@/components'
-import { BASE_URL } from '@/utils/request'
 import { formatDateTime } from '@/utils/format'
 import { getFileType } from '@/utils/fileType'
 
@@ -51,12 +50,12 @@ export default function PhotoPreview() {
         <View className={styles.photoContainer}>
           {getFileType(photoData.name) === 'video' ? (
             <Video 
-              src={`${BASE_URL}${photoData.src}`} 
+              src={photoData.src}
               className={styles.photoImage}
             />
           ) : (
             <Image 
-              src={`${BASE_URL}${photoData.src}`} 
+              src={photoData.src}
               className={styles.photoImage}
               mode="aspectFit"
             />

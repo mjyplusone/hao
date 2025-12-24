@@ -12,11 +12,13 @@ import { useTransferStore } from '@/store/transfer'
 interface Props {
     folder: PhotoFolder
     selectionMode: 'select' | 'selectAll' | null
+    onPreview?: (photo: Photo) => void
 }
 
 const PhotoList: React.FC<Props> = ({ 
     folder, 
     selectionMode,
+    onPreview,
 }) => {
     const [viewMode, setViewMode] = useState<ViewMode>('my')
     
@@ -61,16 +63,16 @@ const PhotoList: React.FC<Props> = ({
         }
     )
 
-    // // 页面显示时刷新数据
-    // useDidShow(() => {
-    //     const user = Taro.getStorageSync("userInfo")
-    //     run({ current: 1, pageSize: 20, user: viewMode === "my" ? user.name : undefined })
-    // })
+    // 页面显示时刷新数据
+    useDidShow(() => {
+        const user = Taro.getStorageSync("userInfo")
+        run({ current: 1, pageSize: 20, user: viewMode === "my" ? user.name : undefined })
+    })
 
     React.useEffect(() => {
         const user = Taro.getStorageSync("userInfo")
         run({ current: 1, pageSize: 20, user: viewMode === "my" ? user.name : undefined })
-    }, [folder, viewMode])
+    }, [viewMode])
 
     // 监听上传任务完成，自动刷新列表
     React.useEffect(() => {
@@ -92,12 +94,10 @@ const PhotoList: React.FC<Props> = ({
         }
     }, [tasks, run, viewMode])
 
-    
     // 加载更多的函数
     const loadMore = React.useCallback(() => {
-            if (!noMore && !loading) {
+        if (!noMore && !loading) {
             run({ current: pagination.current + 1, pageSize: 20 })
-            
         }
     }, [noMore, loading])
 
@@ -132,6 +132,7 @@ const PhotoList: React.FC<Props> = ({
                         photoList={photoList}
                         selectionMode={selectionMode}
                         onLoadMore={loadMore}
+                        onPreview={onPreview}
                     />
                 </>
             )}

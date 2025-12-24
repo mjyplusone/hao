@@ -2,9 +2,10 @@ import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useState, useMemo, lazy, Suspense } from 'react'
 import LoginLayout from '@/Layout/LoginLayout'
-import { PhotoFolder } from '@/types'
+import { PhotoFolder, Photo } from '@/types'
 import { Header } from '@/components'
 import { useTransferStore } from '@/store/transfer'
+import { Preview } from './components/Preview'
 
 import styles from './index.module.scss'
 
@@ -15,6 +16,7 @@ export default function Album() {
   const [currentFolder, setCurrentFolder] = useState<PhotoFolder | null>(null)
   const [showMenu, setShowMenu] = useState(false)
   const [selectionMode, setSelectionMode] = useState<'select' | 'selectAll' | null>(null)
+  const [previewPhoto, setPreviewPhoto] = useState<Photo | null>(null)
   const { tasks } = useTransferStore()
 
   const hasActiveTasks = useMemo(() => tasks.some((task) => task.status === "pending"), [tasks]);
@@ -42,6 +44,14 @@ export default function Album() {
     Taro.navigateTo({
       url: '/subpackages/transfer/index'
     })
+  }
+
+  const handlePreview = (photo: Photo) => {
+    setPreviewPhoto(photo)
+  }
+
+  const handleClosePreview = () => {
+    setPreviewPhoto(null)
   }
 
   const renderTransferButton = () => (
@@ -104,6 +114,7 @@ export default function Album() {
             <PhotoList 
               folder={currentFolder} 
               selectionMode={selectionMode}
+              onPreview={handlePreview}
             />
           ) : (
             <FolderList 
@@ -111,6 +122,11 @@ export default function Album() {
             />
           )}
         </Suspense>
+
+        <Preview 
+          photo={previewPhoto}
+          onClose={handleClosePreview}
+        />
       </View>
     </LoginLayout>
   )

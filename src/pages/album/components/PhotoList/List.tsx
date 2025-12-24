@@ -17,12 +17,14 @@ interface Props {
     photoList: Photo[]
     selectionMode: 'select' | 'selectAll' | null
     onLoadMore?: () => void
+    onPreview?: (photo: Photo) => void
 }
 
 export const List: React.FC<Props> = ({
     photoList = [],
     selectionMode,
     onLoadMore,
+    onPreview,
 }) => {
     const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set([]))
     const scrollInfoRef = useRef({ scrollTop: 0, scrollHeight: 0, clientHeight: 0 })
@@ -50,11 +52,9 @@ export const List: React.FC<Props> = ({
         if (selectionMode) {
             handleItemSelect(photo.id)
         } else {
-            Taro.navigateTo({
-              url: `/pages/album/preview?id=${photo.id}&src=${encodeURIComponent(photo.preview_url || photo.thumbnail_url || '')}&date=${photo.created_at || ''}&name=${photo.name}`
-            })
+            onPreview?.(photo)
         }
-    }, [selectionMode, handleItemSelect])
+    }, [selectionMode, handleItemSelect, onPreview])
 
     const handleDownload = () => {
         if (selectedItems.size === 0) {

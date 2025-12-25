@@ -1,23 +1,36 @@
 import { View, Text, Image } from '@tarojs/components'
 import { VirtualList } from '@tarojs/components-advanced'
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useMemo } from 'react'
 import { Photo } from '@/types'
 import Taro from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useTransferStore } from '@/store/transfer'
-import { formatDateTime } from '@/utils/format'
 import { getFileType } from '@/utils/fileType'
 
-// 虚拟列表配置
-const ITEM_HEIGHT = 100 // 每个照片项的高度（rpx）
-const screenWidth = Taro.getSystemInfoSync().screenWidth
-const itemHeightPx = (screenWidth / 750) * ITEM_HEIGHT // 数字类型 px
+// 网格布局配置
+const COLUMNS = 3 // 每行照片数量
+const GAP = 8 // 照片之间的间距（rpx）
+const PADDING = 40
+const screenInfo = Taro.getSystemInfoSync()
+const screenWidth = screenInfo.screenWidth
+// rpx 转 px 的比例：750rpx = screenWidth px
+const rpxToPx = screenWidth / 750
+// 计算每张照片的尺寸（rpx）：屏幕宽度减去左右边距和间距
+const photoSizeRpx = (750 - PADDING * 2 - (COLUMNS - 1) * GAP) / COLUMNS
+const ROW_HEIGHT_RPX = photoSizeRpx + GAP // 每行高度（rpx）
+const ROW_HEIGHT_PX = Math.ceil(ROW_HEIGHT_RPX * rpxToPx) // 转换为 px
 
 interface Props {
     photoList: Photo[]
     selectionMode: 'select' | 'selectAll' | null
     onLoadMore?: () => void
     onPreview?: (photo: Photo) => void
+}
+
+// 将照片列表按行分组
+interface PhotoRow {
+    photos: Photo[]
+    rowIndex: number
 }
 
 export const List: React.FC<Props> = ({
@@ -30,23 +43,37 @@ export const List: React.FC<Props> = ({
     const scrollInfoRef = useRef({ scrollTop: 0, scrollHeight: 0, clientHeight: 0 })
     const touchStartRef = useRef<{ x: number; y: number } | null>(null)
 
+    // 将照片列表按行分组
+    const photoRows = useMemo<PhotoRow[]>(() => {
+        const rows: PhotoRow[] = []
+        for (let i = 0; i < photoList.length; i += COLUMNS) {
+            rows.push({
+                photos: photoList.slice(i, i + COLUMNS),
+                rowIndex: Math.floor(i / COLUMNS)
+            })
+        }
+        return rows
+    }, [photoList])
+
     React.useEffect(() => {
         if (selectionMode === 'selectAll') {
             setSelectedItems(new Set(photoList.map((photo) => photo.id)))
         } else {
             setSelectedItems(new Set())
         }
-    }, [selectionMode])
+    }, [selectionMode, photoList])
 
     const handleItemSelect = useCallback((itemId: number) => {
-        const newSelectedItems = new Set(selectedItems)
-        if (newSelectedItems.has(itemId)) {
-            newSelectedItems.delete(itemId)
-        } else {
-            newSelectedItems.add(itemId)
-        }
-        setSelectedItems(newSelectedItems)
-    }, [selectedItems])
+        setSelectedItems(prev => {
+            const newSelectedItems = new Set(prev)
+            if (newSelectedItems.has(itemId)) {
+                newSelectedItems.delete(itemId)
+            } else {
+                newSelectedItems.add(itemId)
+            }
+            return newSelectedItems
+        })
+    }, [])
 
     const handlePhotoClick = useCallback((photo: Photo) => {
         if (selectionMode) {
@@ -84,10 +111,10 @@ export const List: React.FC<Props> = ({
         const detail = e.detail || e
         scrollInfoRef.current = {
             scrollTop: detail.scrollTop || detail.scrollOffset || 0,
-            scrollHeight: detail.scrollHeight || photoList.length * itemHeightPx,
+            scrollHeight: detail.scrollHeight || 0,
             clientHeight: detail.clientHeight || detail.height || 0,
         }
-    }, [photoList.length, itemHeightPx])
+    }, [])
 
     // 处理触摸开始事件，记录触摸位置
     const handleTouchStart = useCallback((e: any) => {
@@ -130,57 +157,95 @@ export const List: React.FC<Props> = ({
         }
     }, [onLoadMore])
 
-    // 渲染单个列表项
-    const renderItem = ({ index, data }) => {
-        const item = data[index]
-        const fileType = getFileType(item.name)
-        const isVideo = fileType === 'video'
+
+
+    // 渲染一行照片 - 使用 useMemo 缓存，减少重新渲染
+    const renderRow = useCallback(({ index, data }: { index: number; data: PhotoRow[] }) => {
+        const row = data[index]
+        if (!row) return null
         
         return (
             <View 
-                className={`${styles.photoItem} ${selectionMode ? styles.selectionMode : ''}`}
-                onClick={() => handlePhotoClick(item)}
+                className={styles.photoRow}
+                style={{
+                    paddingLeft: `${GAP}rpx`,
+                    paddingRight: `${GAP}rpx`,
+                    height: `${ROW_HEIGHT_RPX}rpx`,
+                }}
             >
-                {selectionMode && (
-                    <View className={styles.checkbox}>
-                        <View className={`${styles.checkboxInner} ${selectedItems.has(item.id) ? styles.checked : ''}`}>
-                            {selectedItems.has(item.id) && (
-                                <Text className={styles.checkmark}>✓</Text>
-                            )}
+                {row.photos.map((photo, photoIndex) => {
+                    const fileType = getFileType(photo.name)
+                    const isVideo = fileType === 'video'
+                    const isSelected = selectedItems.has(photo.id)
+                    const isUploading = photo.upload_status !== 2 && photo.upload_progress !== 100
+                    const isTranscoding = !isUploading && isVideo && photo.transcode_status !== 0
+                    
+                    return (
+                        <View 
+                            key={photo.id || `photo-${row.rowIndex}-${photoIndex}`}
+                            className={`${styles.photoItem} ${selectionMode ? styles.selectionMode : ''} ${isSelected ? styles.selected : ''}`}
+                            onClick={() => handlePhotoClick(photo)}
+                            style={{
+                                width: `${photoSizeRpx}rpx`,
+                                height: `${photoSizeRpx}rpx`,
+                            }}
+                        >
+                            <View className={styles.photoWrapper}>
+                                <Image 
+                                    src={photo.thumbnail_url} 
+                                    className={styles.photoThumbnail}
+                                    mode="aspectFill"
+                                />
+                                {isVideo && (
+                                    <View className={styles.videoBadge}>
+                                        <Text className={styles.videoIcon}>▶</Text>
+                                    </View>
+                                )}
+                                {(isUploading || isTranscoding) && (
+                                    <View className={styles.statusBadgesContainer}>
+                                        {isUploading && (
+                                            <View className={styles.statusBadge}>
+                                                <Text className={styles.statusText}>上传中</Text>
+                                            </View>
+                                        )}
+                                        {isTranscoding && (
+                                            <View className={styles.statusBadge}>
+                                                <Text className={styles.statusText}>转码中</Text>
+                                            </View>
+                                        )}
+                                    </View>
+                                )}
+                                {selectionMode && (
+                                    <View className={styles.checkbox}>
+                                        <View className={`${styles.checkboxInner} ${isSelected ? styles.checked : ''}`}>
+                                            {isSelected && (
+                                                <Text className={styles.checkmark}>✓</Text>
+                                            )}
+                                        </View>
+                                    </View>
+                                )}
+                            </View>
                         </View>
-                    </View>
-                )}
-                <View className={styles.thumbnailWrapper}>
-                    <Image src={item.thumbnail_url} className={styles.photoThumbnail} />
-                    {isVideo && (
-                        <View className={styles.videoBadge}>
-                            <Text className={styles.videoIcon}>▶</Text>
-                        </View>
-                    )}
-                </View>
-                <View className={styles.photoInfo}>
-                    <View className={styles.photoDateRow}>
-                        <Text className={styles.photoDate}>{formatDateTime(item.created_at)}</Text>
-                        {isVideo && (
-                            <Text className={styles.fileTypeLabel}>视频</Text>
-                        )}
-                    </View>
-                </View>
+                    )
+                })}
+                {/* 如果一行不满，用空 View 填充 */}
+                {Array.from({ length: COLUMNS - row.photos.length }).map((_, i) => (
+                    <View key={`empty-${row.rowIndex}-${i}`} style={{ width: `${photoSizeRpx}rpx`, height: `${photoSizeRpx}rpx` }} />
+                ))}
             </View>
         )
-    }
+    }, [selectionMode, selectedItems, handlePhotoClick])
 
     return (
         <>
             <VirtualList
-                key={photoList.length}
                 className={styles.photoListScrollView}
                 height="calc(100vh - 200rpx)" // 使用剩余高度
-                itemData={photoList}
-                itemCount={photoList.length}
-                itemSize={itemHeightPx}
-                overscanCount={5} // 预渲染的额外项目数量
-                item={renderItem}
+                itemData={photoRows}
+                itemCount={photoRows.length}
+                itemSize={ROW_HEIGHT_PX}
+                overscanCount={5} // 预渲染的额外行数，降低以减少闪烁
+                item={renderRow}
                 width="100%"
                 onScroll={handleScroll}
                 onTouchStart={handleTouchStart}

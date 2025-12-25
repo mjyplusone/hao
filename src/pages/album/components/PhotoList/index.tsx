@@ -117,26 +117,23 @@ const PhotoList: React.FC<Props> = ({
                     全部
                 </View>
             </View>
+                
+            <View className={styles.photoListHeader}>
+                <Text className={styles.currentFolderTitle}>
+                    {folder.name}
+                </Text>
+            </View>
 
             {photoList.length === 0 ? (
                 <Empty content="暂无照片" />
             ) : (
-                <>
-                    <View className={styles.photoListHeader}>
-                        <Text className={styles.currentFolderTitle}>
-                            {folder.name}
-                        </Text>
-                    </View>
-
-                    <List
-                        photoList={photoList}
-                        selectionMode={selectionMode}
-                        onLoadMore={loadMore}
-                        onPreview={onPreview}
-                    />
-                </>
+                <List
+                    photoList={photoList}
+                    selectionMode={selectionMode}
+                    onLoadMore={loadMore}
+                    onPreview={onPreview}
+                />
             )}
-
             
         </View>
     )

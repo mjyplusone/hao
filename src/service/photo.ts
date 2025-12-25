@@ -15,7 +15,7 @@ export const getFolderPhotos = async (params: {
     `/folder/${params.folderId}/files`,
     {
       page: params.page,
-      size: 20,
+      size: 21,
       ...(params.user ? { user: params.user } : {}),
     }
   );

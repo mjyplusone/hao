@@ -6,6 +6,9 @@ export interface Photo {
   thumbnail_url: string;
   preview_url?: string;
   created_at?: string;
+  transcode_status: number;
+  upload_progress: number;
+  upload_status: number;
 }
 
 export type ViewMode = "all" | "my";

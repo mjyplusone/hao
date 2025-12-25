@@ -25,7 +25,7 @@ const RecentPhoto: React.FC<Props> = ({ photoList = [] }) => {
                 <Image
                   src={photo.thumbnail_url}
                   mode="widthFix"
-                  style={{ width: "70%" }}
+                  style={{ width: "85%" }}
                   className={styles.photo}
                 />
               </View>

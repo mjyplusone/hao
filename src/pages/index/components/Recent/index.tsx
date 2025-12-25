@@ -29,7 +29,7 @@ export default function Recent() {
       </View> */}
 
       <View className={styles.section}>
-        <Text className={styles.sectionHeader}>💬 对小好说</Text>
+        <Text className={styles.sectionHeader}>💬 最近留言</Text>
         <RecentSay messageList={recentSays ?? []} />
       </View>
     </View>

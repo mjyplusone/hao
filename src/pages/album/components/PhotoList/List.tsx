@@ -1,5 +1,4 @@
-import { View, Text, Image } from '@tarojs/components'
-import { VirtualList } from '@tarojs/components-advanced'
+import { View, Text, Image, ScrollView } from '@tarojs/components'
 import React, { useState, useCallback, useRef, useMemo } from 'react'
 import { Photo } from '@/types'
 import Taro from '@tarojs/taro'
@@ -11,14 +10,9 @@ import { getFileType } from '@/utils/fileType'
 const COLUMNS = 3 // 每行照片数量
 const GAP = 8 // 照片之间的间距（rpx）
 const PADDING = 40
-const screenInfo = Taro.getSystemInfoSync()
-const screenWidth = screenInfo.screenWidth
-// rpx 转 px 的比例：750rpx = screenWidth px
-const rpxToPx = screenWidth / 750
 // 计算每张照片的尺寸（rpx）：屏幕宽度减去左右边距和间距
 const photoSizeRpx = (750 - PADDING * 2 - (COLUMNS - 1) * GAP) / COLUMNS
 const ROW_HEIGHT_RPX = photoSizeRpx + GAP // 每行高度（rpx）
-const ROW_HEIGHT_PX = Math.ceil(ROW_HEIGHT_RPX * rpxToPx) // 转换为 px
 
 interface Props {
     photoList: Photo[]
@@ -159,98 +153,103 @@ export const List: React.FC<Props> = ({
 
 
 
-    // 渲染一行照片 - 使用 useMemo 缓存，减少重新渲染
-    const renderRow = useCallback(({ index, data }: { index: number; data: PhotoRow[] }) => {
-        const row = data[index]
-        if (!row) return null
-        
-        return (
-            <View 
-                className={styles.photoRow}
-                style={{
-                    paddingLeft: `${GAP}rpx`,
-                    paddingRight: `${GAP}rpx`,
-                    height: `${ROW_HEIGHT_RPX}rpx`,
-                }}
-            >
-                {row.photos.map((photo, photoIndex) => {
-                    const fileType = getFileType(photo.name)
-                    const isVideo = fileType === 'video'
-                    const isSelected = selectedItems.has(photo.id)
-                    const isUploading = photo.upload_status !== 2 && photo.upload_progress !== 100
-                    const isTranscoding = !isUploading && isVideo && photo.transcode_status !== 0
-                    
-                    return (
-                        <View 
-                            key={photo.id || `photo-${row.rowIndex}-${photoIndex}`}
-                            className={`${styles.photoItem} ${selectionMode ? styles.selectionMode : ''} ${isSelected ? styles.selected : ''}`}
-                            onClick={() => handlePhotoClick(photo)}
-                            style={{
-                                width: `${photoSizeRpx}rpx`,
-                                height: `${photoSizeRpx}rpx`,
-                            }}
-                        >
-                            <View className={styles.photoWrapper}>
-                                <Image 
-                                    src={photo.thumbnail_url} 
-                                    className={styles.photoThumbnail}
-                                    mode="aspectFill"
-                                />
-                                {isVideo && (
-                                    <View className={styles.videoBadge}>
-                                        <Text className={styles.videoIcon}>▶</Text>
-                                    </View>
-                                )}
-                                {(isUploading || isTranscoding) && (
-                                    <View className={styles.statusBadgesContainer}>
-                                        {isUploading && (
-                                            <View className={styles.statusBadge}>
-                                                <Text className={styles.statusText}>上传中</Text>
-                                            </View>
-                                        )}
-                                        {isTranscoding && (
-                                            <View className={styles.statusBadge}>
-                                                <Text className={styles.statusText}>转码中</Text>
-                                            </View>
-                                        )}
-                                    </View>
-                                )}
-                                {selectionMode && (
-                                    <View className={styles.checkbox}>
-                                        <View className={`${styles.checkboxInner} ${isSelected ? styles.checked : ''}`}>
-                                            {isSelected && (
-                                                <Text className={styles.checkmark}>✓</Text>
-                                            )}
-                                        </View>
-                                    </View>
-                                )}
-                            </View>
-                        </View>
-                    )
-                })}
-                {/* 如果一行不满，用空 View 填充 */}
-                {Array.from({ length: COLUMNS - row.photos.length }).map((_, i) => (
-                    <View key={`empty-${row.rowIndex}-${i}`} style={{ width: `${photoSizeRpx}rpx`, height: `${photoSizeRpx}rpx` }} />
-                ))}
-            </View>
-        )
-    }, [selectionMode, selectedItems, handlePhotoClick])
+
+    // 处理 scroll-view 的滚动到底部事件
+    const handleScrollToLower = useCallback(() => {
+        onLoadMore?.()
+    }, [onLoadMore])
 
     return (
         <>
-            <VirtualList
+            {/* 使用 scroll-view 替代 VirtualList，这样 lazyLoad 可以生效 */}
+            <View 
                 className={styles.photoListScrollView}
-                height="calc(100vh - 200rpx)" // 使用剩余高度
-                itemData={photoRows}
-                itemCount={photoRows.length}
-                itemSize={ROW_HEIGHT_PX}
-                overscanCount={5} // 预渲染的额外行数，降低以减少闪烁
-                item={renderRow}
-                width="100%"
-                onScroll={handleScroll}
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-            />
+                style={{ height: 'calc(100vh - 200rpx)' }}
+            >
+                <ScrollView
+                    className={styles.scrollView}
+                    scrollY
+                    lowerThreshold={200}
+                    onScroll={handleScroll}
+                    onScrollToLower={handleScrollToLower}
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
+                    style={{ height: '100%' }}
+                >
+                    {photoRows.map((row) => (
+                        <View 
+                            key={`row-${row.rowIndex}`}
+                            className={styles.photoRow}
+                            style={{
+                                paddingLeft: `${GAP}rpx`,
+                                paddingRight: `${GAP}rpx`,
+                                height: `${ROW_HEIGHT_RPX}rpx`,
+                            }}
+                        >
+                            {row.photos.map((photo, photoIndex) => {
+                                const fileType = getFileType(photo.name)
+                                const isVideo = fileType === 'video'
+                                const isSelected = selectedItems.has(photo.id)
+                                const isUploading = photo.upload_status !== 2 && photo.upload_progress !== 100
+                                const isTranscoding = !isUploading && isVideo && photo.transcode_status !== 0
+                                
+                                return (
+                                    <View 
+                                        key={photo.id || `photo-${row.rowIndex}-${photoIndex}`}
+                                        className={`${styles.photoItem} ${selectionMode ? styles.selectionMode : ''} ${isSelected ? styles.selected : ''}`}
+                                        onClick={() => handlePhotoClick(photo)}
+                                        style={{
+                                            width: `${photoSizeRpx}rpx`,
+                                            height: `${photoSizeRpx}rpx`,
+                                        }}
+                                    >
+                                        <View className={styles.photoWrapper}>
+                                            <Image 
+                                                src={photo.thumbnail_url} 
+                                                className={styles.photoThumbnail}
+                                                mode="aspectFill"
+                                                lazyLoad
+                                            />
+                                            {isVideo && (
+                                                <View className={styles.videoBadge}>
+                                                    <Text className={styles.videoIcon}>▶</Text>
+                                                </View>
+                                            )}
+                                            {(isUploading || isTranscoding) && (
+                                                <View className={styles.statusBadgesContainer}>
+                                                    {isUploading && (
+                                                        <View className={styles.statusBadge}>
+                                                            <Text className={styles.statusText}>上传中</Text>
+                                                        </View>
+                                                    )}
+                                                    {isTranscoding && (
+                                                        <View className={styles.statusBadge}>
+                                                            <Text className={styles.statusText}>转码中</Text>
+                                                        </View>
+                                                    )}
+                                                </View>
+                                            )}
+                                            {selectionMode && (
+                                                <View className={styles.checkbox}>
+                                                    <View className={`${styles.checkboxInner} ${isSelected ? styles.checked : ''}`}>
+                                                        {isSelected && (
+                                                            <Text className={styles.checkmark}>✓</Text>
+                                                        )}
+                                                    </View>
+                                                </View>
+                                            )}
+                                        </View>
+                                    </View>
+                                )
+                            })}
+                            {/* 如果一行不满，用空 View 填充 */}
+                            {Array.from({ length: COLUMNS - row.photos.length }).map((_, i) => (
+                                <View key={`empty-${row.rowIndex}-${i}`} style={{ width: `${photoSizeRpx}rpx`, height: `${photoSizeRpx}rpx` }} />
+                            ))}
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
 
             {selectionMode && selectedItems.size > 0 && (
                 <View className={styles.downloadButton} onClick={handleDownload}>

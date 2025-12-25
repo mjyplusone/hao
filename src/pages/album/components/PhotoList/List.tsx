@@ -190,8 +190,8 @@ export const List: React.FC<Props> = ({
                                 const fileType = getFileType(photo.name)
                                 const isVideo = fileType === 'video'
                                 const isSelected = selectedItems.has(photo.id)
-                                const isUploading = photo.upload_status !== 2 && photo.upload_progress !== 100
-                                const isTranscoding = !isUploading && isVideo && photo.transcode_status !== 0
+                                const isUploading = photo.upload_status !== 2
+                                const isTranscoding = !isUploading && isVideo && photo.transcode_status !== 3
                                 
                                 return (
                                     <View 

@@ -34,8 +34,6 @@ export const List: React.FC<Props> = ({
     onPreview,
 }) => {
     const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set([]))
-    const scrollInfoRef = useRef({ scrollTop: 0, scrollHeight: 0, clientHeight: 0 })
-    const touchStartRef = useRef<{ x: number; y: number } | null>(null)
 
     // 将照片列表按行分组
     const photoRows = useMemo<PhotoRow[]>(() => {
@@ -100,60 +98,6 @@ export const List: React.FC<Props> = ({
         setSelectedItems(new Set())
     }
 
-    // 处理滚动事件，更新滚动位置信息
-    const handleScroll = useCallback((e: any) => {
-        const detail = e.detail || e
-        scrollInfoRef.current = {
-            scrollTop: detail.scrollTop || detail.scrollOffset || 0,
-            scrollHeight: detail.scrollHeight || 0,
-            clientHeight: detail.clientHeight || detail.height || 0,
-        }
-    }, [])
-
-    // 处理触摸开始事件，记录触摸位置
-    const handleTouchStart = useCallback((e: any) => {
-        const touch = e.touches?.[0] || e.changedTouches?.[0]
-        if (touch) {
-            touchStartRef.current = { x: touch.clientX || touch.x, y: touch.clientY || touch.y }
-        }
-    }, [])
-
-    // 处理触摸结束事件，检测是否滚动到底部
-    const handleTouchEnd = useCallback((e: any) => {
-        // 如果没有触摸开始记录，说明不是正常的触摸流程，直接返回
-        if (!touchStartRef.current) {
-            return
-        }
-
-        // 检查是否是点击事件（位置变化很小）还是滚动事件
-        const touch = e.changedTouches?.[0] || e.touches?.[0]
-        if (touch) {
-            const endX = touch.clientX || touch.x
-            const endY = touch.clientY || touch.y
-            const deltaX = Math.abs(endX - touchStartRef.current.x)
-            const deltaY = Math.abs(endY - touchStartRef.current.y)
-            
-            // 如果移动距离小于 10px，认为是点击事件，不触发 loadMore
-            if (deltaX < 10 && deltaY < 10) {
-                touchStartRef.current = null
-                return
-            }
-        }
-        
-        // 清除触摸开始记录
-        touchStartRef.current = null
-
-        // 只有真正的滚动事件才触发 loadMore
-        const { scrollTop, scrollHeight, clientHeight } = scrollInfoRef.current
-        const distanceToBottom = scrollHeight - scrollTop - clientHeight
-        if (distanceToBottom < 200) {
-            onLoadMore?.()
-        }
-    }, [onLoadMore])
-
-
-
-
     // 处理 scroll-view 的滚动到底部事件
     const handleScrollToLower = useCallback(() => {
         onLoadMore?.()
@@ -170,10 +114,7 @@ export const List: React.FC<Props> = ({
                     className={styles.scrollView}
                     scrollY
                     lowerThreshold={200}
-                    onScroll={handleScroll}
                     onScrollToLower={handleScrollToLower}
-                    onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
                     style={{ height: '100%' }}
                 >
                     {photoRows.map((row) => (

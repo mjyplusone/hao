@@ -11,6 +11,10 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
+.overlay.hidden {
+  display: none;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -113,6 +117,9 @@
 
 .detailItem {
   margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   
   &:last-child {
     margin-bottom: 0;
@@ -120,18 +127,18 @@
 }
 
 .detailLabel {
-  display: block;
   font-size: 30rpx;
   color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 10rpx;
   font-weight: 500;
+  margin-right: 20rpx;
 }
 
 .detailValue {
-  display: block;
   font-size: 34rpx;
   color: #fff;
   font-weight: 600;
   line-height: 1.4;
+  flex: 1;
+  text-align: right;
 }
 

@@ -7,6 +7,7 @@ import { Header } from '@/components'
 import { createSay, getSayList } from '@/service'
 import { useRequest } from 'ahooks'
 import { formatDate } from '@/utils/format'
+import { getUsername } from '@/utils/username'
 
 export default function Say() {
   const [inputValue, setInputValue] = React.useState('')
@@ -63,7 +64,7 @@ export default function Say() {
                 <Text className={styles.messageText}>{message.content}</Text>
               </View>
               <View className={styles.messageInfo}>
-                <Text className={styles.messageUsername}>{message.user_name}</Text>
+                <Text className={styles.messageUsername}>{getUsername(message.user_name)}</Text>
                 <Text className={styles.messageDate}>{formatDate(message.created_at)}</Text>
               </View>
             </View>

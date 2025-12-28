@@ -97,7 +97,8 @@ const PhotoList: React.FC<Props> = ({
     // 加载更多的函数
     const loadMore = React.useCallback(() => {
         if (!noMore && !loading) {
-            run({ current: pagination.current + 1, pageSize: 20 })
+            const user = Taro.getStorageSync("userInfo")
+            run({ current: pagination.current + 1, pageSize: 20, user: viewMode === "my" ? user.name : undefined })
         }
     }, [noMore, loading])
 
@@ -128,6 +129,7 @@ const PhotoList: React.FC<Props> = ({
                 <Empty content="暂无照片" />
             ) : (
                 <List
+                    key={viewMode}
                     photoList={photoList}
                     selectionMode={selectionMode}
                     onLoadMore={loadMore}

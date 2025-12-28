@@ -3,6 +3,7 @@ import styles from './index.module.scss'
 import { formatDateTime } from '@/utils/format'
 import { getFileType } from '@/utils/fileType'
 import { Photo } from '@/types'
+import { getUsername } from '@/utils/username'
 
 interface PreviewProps {
   photo: Photo | null
@@ -43,7 +44,7 @@ export const Preview: React.FC<PreviewProps> = ({ photo, onClose }) => {
               </View>
               <View className={styles.detailItem}>
                 <Text className={styles.detailLabel}>上传人</Text>
-                <Text className={styles.detailValue}>{photo.user_name || '--'}</Text>
+                <Text className={styles.detailValue}>{getUsername(photo.user_name) || '--'}</Text>
               </View>
             </View>
           </>

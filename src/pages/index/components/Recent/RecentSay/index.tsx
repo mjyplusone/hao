@@ -3,6 +3,7 @@ import styles from './index.module.scss'
 import { Say } from '@/types'
 import { formatDate } from '@/utils/format'
 import { Empty } from "@/components"
+import { getUsername } from '@/utils/username'
 
 interface Props {
     messageList: Say[]
@@ -20,7 +21,7 @@ const RecentSay: React.FC<Props> = ({ messageList = [] }) => {
                 >
                     <Text className={styles.messageContent}>{message.content}</Text>
                     <Text className={styles.messageDate}>{formatDate(message.created_at)}</Text>
-                    <Text className={styles.messageUsername}>{message.user_name}</Text>
+                    <Text className={styles.messageUsername}>{getUsername(message.user_name)}</Text>
                 </View>
           ))}
         </View>

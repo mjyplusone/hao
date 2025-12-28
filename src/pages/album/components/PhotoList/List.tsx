@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView } from '@tarojs/components'
-import React, { useState, useCallback, useRef, useMemo } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { Photo } from '@/types'
 import Taro from '@tarojs/taro'
 import styles from './index.module.scss'
@@ -12,7 +12,6 @@ const GAP = 8 // 照片之间的间距（rpx）
 const PADDING = 40
 // 计算每张照片的尺寸（rpx）：屏幕宽度减去左右边距和间距
 const photoSizeRpx = (750 - PADDING * 2 - (COLUMNS - 1) * GAP) / COLUMNS
-const ROW_HEIGHT_RPX = photoSizeRpx + GAP // 每行高度（rpx）
 
 interface Props {
     photoList: Photo[]
@@ -124,7 +123,8 @@ export const List: React.FC<Props> = ({
                             style={{
                                 paddingLeft: `${GAP}rpx`,
                                 paddingRight: `${GAP}rpx`,
-                                height: `${ROW_HEIGHT_RPX}rpx`,
+                                height: `${photoSizeRpx}rpx`,
+                                marginTop: row.rowIndex === 0 ? '0' : `${GAP}rpx`,
                             }}
                         >
                             {row.photos.map((photo, photoIndex) => {
